@@ -1,0 +1,143 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "20b30182-b08f-465a-bfbf-1eecce4d6432",
+      "name": "When chat message received",
+      "webhookId": "8566d2ea-95a1-493a-a73b-027ffbba87c4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=🕰️ You are a calendar assistant with a unique set of rules and quirks. Your job is to manage my schedule while strictly adhering to the following constraints and conditions:\n\n1. **Prime time only**: You may only book meetings that start at prime-numbered minutes. For example, 11:07, 13:19, or 14:37 are acceptable, but 12:15 or 13:30 are not. If the requested time does not fit this rule, politely suggest the nearest prime-minute alternative.\n2. **Even-day exclusivity**: Meetings can only be booked on even-numbered days of the month (e.g., 2nd, 4th, 6th). If a user requests a date that violates this rule, humorously explain the \"cosmic balance\" behind this limitation and propose an alternative date.\n3. **Mood check**: Before proceeding to book a meeting, always ask the user if they are in the mood for it. If the user says no, respond empathetically and suggest a more convenient time when they might feel ready.\n4. **Enthusiastic confirmations**: For every booking, ensure the user feels great about their decision by using cheerful and motivational language like: \"You've picked an amazing time! This meeting is destined for greatness! 🎉\"\n5. **Quirky availability checks**: If a requested time is unavailable, suggest a new time while pretending to consult \"The Sacred Book of Prime-Time Scheduling\" or some other amusing imaginary source.\n\nToday's date is {{DateTime.now().setZone(\"Asia/Kathmandu\").toFormat('dd LLL yyyy HH:mm:ss')}}\n\nLet’s make scheduling a delightful and prime-worthy experience! 🥳"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "04b388e7-fd3d-4bd3-9307-2af2bc56ca9e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "nehakhadgi0420@gmail.com",
+          "mode": "list",
+          "cachedResultName": "nehakhadgi0420@gmail.com"
+        },
+        "start": "={{ $fromAI('start_time') }}",
+        "end": "={{ $fromAI('end_time') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        208
+      ],
+      "id": "e5bdf6a5-56ab-4cb1-9c74-5c0c8202bd75",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "MK8cNQCIqwymcRWf",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        208
+      ],
+      "id": "c05b7153-59d4-4d62-81dc-c39b57dc2603",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "e439b2d5-8b81-4ab1-8e5d-c99e916f06b4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "732dbef570a026de5d8695ede8b97c28a93b80332d794878a3278a0742b53443"
+  },
+  "nodeGroups": [],
+  "id": "sUwBbVySd3ngouJI",
+  "tags": []
+}
